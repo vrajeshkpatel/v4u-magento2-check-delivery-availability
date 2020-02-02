@@ -1,0 +1,49 @@
+<?php $product = $this->getCurrentProduct() ?>
+<?php if($product && $product->getCheckDeliveryEnable() != 2 && $this->getIsActive() == 1): ?>
+	<div class="zipchecker-product">
+		<form class="form-product-zipcode" method="post" id="form-product-zipcode" novalidate="novalidate">
+			<div class="zipcode-box">
+				<div class="zipcode-inner">
+					<div class="control">
+						<input type="text" value="" placeholder="<?php echo __('Enter Delivery Zipcode') ?>" name="zipcode" id="zipcode" title="<?php echo __('Zipcode') ?>" class="input-text postcode valid" autocomplete="off" data-validate="{'required':true}">
+					</div>
+				</div>
+				<div class="zipcode-check-btn">
+					<button class="action primary" type="submit" title="Check" id="button-zipcode-check">
+						<span><?php echo __('Check') ?></span>
+					</button>
+				</div>
+				<div class="message"></div>
+			</div>
+		</form>
+	</div>
+<script type="text/javascript">
+require([
+	'jquery',
+	'mage/mage'
+], function ($) { 
+	var dataForm = $('#form-product-zipcode');
+	dataForm.mage('validation', {});
+	var dataFormMessage = $('#form-product-zipcode .message');
+	dataFormMessage.removeClass('success').removeClass('error').hide();
+	$('#button-zipcode-check').on('click',function () {
+		var formData = new FormData();
+		formData.append('zipcode', $('#form-product-zipcode input[name="zipcode"]').val());
+		$.ajax({
+			url: '<?php echo $this->getUrl('zipchecker/zipchecker/zipchecker',['id'=> $product->getId()]) ?>',
+			data: formData,
+			processData: false,
+			contentType: false,
+			showLoader: true,
+			type: 'POST',
+			dataType: 'json',
+			success: function (response) {
+				dataFormMessage.removeClass('success').removeClass('error').hide();
+				dataFormMessage.addClass(response.type).html(response.message).show();
+			}
+		});
+		return false;
+	});
+});
+</script>
+<?php endif; ?>
