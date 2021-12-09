@@ -19,15 +19,15 @@ php bin/magento cache:clean
 
 ## Zip Code available.
 
-<img src="app/code/V4U/ZipChecker/docs/Available.png"/>
+<img src="docs/Available.png"/>
 
 ## Zip Code not available.
 
-<img src="app/code/V4U/ZipChecker/docs/NotAvailable.png"/>
+<img src="docs/NotAvailable.png"/>
 
 ## Admin Product Grid.
 
-<img src="app/code/V4U/ZipChecker/docs/AdminProductGrid.png"/>
+<img src="docs/AdminProductGrid.png"/>
 
 ## Configuration
 
@@ -35,4 +35,4 @@ Open the Magento 2 Admin Panel and navigate to:
  
  **Stores > Settings > Configuration > V4U ZIPCHECER > Check Delivery
 
-<img src="app/code/V4U/ZipChecker/docs/ConfigurationSettings StoresMagentoAdmin.png"/>
+<img src="docs/ConfigurationSettings StoresMagentoAdmin.png"/>
