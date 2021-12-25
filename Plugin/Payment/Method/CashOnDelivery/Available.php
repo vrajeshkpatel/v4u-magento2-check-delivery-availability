@@ -6,10 +6,13 @@ use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Backend\Model\Auth\Session as BackendSession;
 use Magento\OfflinePayments\Model\Cashondelivery;
 use Magento\Checkout\Model\Session as CheckoutSession;
-use V4U\ZipChecker\Helper\Data as DataHelper;
+use V4U\ZipChecker\Model\GridFactory;
+use V4U\ZipChecker\Helper\Data;
 
 class Available
 {
+
+    protected $modelGridFactory;    
     /**
      * @var CustomerSession
      */
@@ -17,7 +20,7 @@ class Available
     /**
      * @var DataHelper
      */
-    protected $dataHelper;
+    /*protected $dataHelper;*/
     /**
      * @var BackendSession
      */
@@ -36,12 +39,14 @@ class Available
         CustomerSession $customerSession,
         BackendSession $backendSession,
         CheckoutSession $checkoutSession,
-        DataHelper $dataHelper
+        GridFactory $modelGridFactory,
+        Data $helper
     ) {
         $this->customerSession = $customerSession;
         $this->backendSession = $backendSession;
         $this->checkoutSession  = $checkoutSession;
-        $this->dataHelper = $dataHelper;
+        $this->modelGridFactory = $modelGridFactory;
+        $this->helper = $helper;
     }
     /**
      *
@@ -56,14 +61,26 @@ class Available
         if ($this->backendSession->isLoggedIn()) {
             return $result;
         }
-        $zipcode = $this->checkoutSession->getQuote()->getShippingAddress()->getPostcode();
-        $zipcodes = $this->dataHelper->getZipCodes();
-        $zipcodes = array_map('trim',explode(',', $zipcodes));
-        if(in_array($zipcode, $zipcodes)){
-            return true;
+
+        $isEnabled = $this->helper->getIsActive();
+        if($isEnabled){
+            $resultPage = $this->modelGridFactory->create();
+            $collection = $resultPage->getCollection();
+            $collection = $collection->addFieldToSelect('zipcode')->addFieldToFilter('is_active',array('eq'=>'1'));
+            $zipcodes = array();
+            foreach ($collection as $zipCodes) {
+                $zipcodes[] =$zipCodes->getZipCode(); 
+            }
+            $zipcode = $this->checkoutSession->getQuote()->getShippingAddress()->getPostcode();
+                if (in_array($zipcode,$zipcodes)){
+                    return true;
+                }
+                else{
+                    return false;
+                } 
         }
         else{
-            return false;
+            return true;
         }
 
     }

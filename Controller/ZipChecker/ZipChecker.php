@@ -6,6 +6,7 @@ use V4U\ZipChecker\Helper\Data as DataHelper;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use V4U\ZipChecker\Model\GridFactory;
 
 /*
  * Class ZipChecker
@@ -14,6 +15,7 @@ use Magento\Framework\App\Action\Context;
 
 class ZipChecker extends Action
 {
+    protected $modelGridFactory;    
     /**
      * @var ProductModel
      */
@@ -33,15 +35,27 @@ class ZipChecker extends Action
     public function __construct(
         Context $context,
         ProductFactory $productFactory,
-        DataHelper $dataHelper
+        DataHelper $dataHelper,
+        GridFactory $modelGridFactory
     ) {
         parent::__construct($context);
         $this->productFactory = $productFactory;
         $this->dataHelper = $dataHelper;
+        $this->modelGridFactory = $modelGridFactory;
     }
 
     public function execute()
     {
+
+        $resultPage = $this->modelGridFactory->create();
+        $collection = $resultPage->getCollection();
+        $collection = $collection->addFieldToSelect('zipcode')->addFieldToFilter('is_active',array('eq'=>'1'));
+        
+        $zipcodes = array();
+        foreach ($collection as $zipCodes) {
+            $zipcodes[] = $zipCodes->getZipCode(); 
+            $zipCodes->getZipCode();
+        }
         $response = [];
         try {
             if(!$this->getRequest()->isAjax()){
@@ -59,13 +73,13 @@ class ZipChecker extends Action
                 throw new \Exception("Product not found");
             }
 
-            $zipcodes = trim($product->getCheckDeliveryPostcodes());
-            if(!$zipcodes){
-                $zipcodes = $this->dataHelper->getZipCodes();
-            }
+            $zipcodesProd = trim($product->getCheckDeliveryPostcodes());
 
-            $zipcodes = array_map('trim',explode(',', $zipcodes));
-            if(in_array($zipcode, $zipcodes)){
+            $zipcodesProd = array_map('trim',explode(',', $zipcodesProd));
+
+            $zipCodeFinal = array_merge($zipcodesProd,$zipcodes);
+
+            if(in_array($zipcode,$zipCodeFinal)){
                 $response['type'] = 'success';
                 $response['message'] = __($this->dataHelper->getSuccessMessage(),$zipcode); 
             } else {
