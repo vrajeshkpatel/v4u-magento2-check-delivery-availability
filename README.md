@@ -33,6 +33,20 @@ php bin/magento cache:clean
 
 Open the Magento 2 Admin Panel and navigate to:
  
- **Stores > Settings > Configuration > V4U ZIPCHECER > Check Delivery
+ ## Stores > Settings > Configuration > V4U ZIPCHECER > Check Delivery
 
 <img src="docs/ConfigurationSettings StoresMagentoAdmin.png"/>
+
+Manage Zipcode In Admin Panel : 
+
+## Admin Panel-> Zipcode Checker
+
+<img src="docs/Manage-Zipcodes-Magento-Admin.png"/>
+
+Import CSV Through Zipcodes
+
+## System -> Data Transfer -> Import -> Zipcode Import
+
+<img src="docs/Import-Import-Export-Data-Transfer-System-Magento-Admin.png"/>
+
+<a href="docs/ZipCode - ZipCode.csv">Sample CSV</a> 
